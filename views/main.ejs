@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+	<head lang="zh-cn">
+		<meta charset="utf-8">
+		<script src="https://unpkg.com/react@15/dist/react.min.js"></script>
+		<script src="https://unpkg.com/react-dom@15/dist/react-dom.min.js"></script>
+		<script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+	</head>
+	<body>
+		<div id="app"></div>
+
+		<script type="text/babel">
+			class Comment extends React.Component{
+				constructor(){
+					super();
+					this.state = {}
+				}
+
+				async _handleCommentSubmit(){
+						try{
+							let res = await fetch('http://127.0.0.1:3000/api/comments', {
+								method: 'POST',
+								headers: {
+    								"Content-Type": "application/x-www-form-urlencoded"
+ 								 },
+								body: "author=breakair&text="+document.querySelector('input').value
+							});
+
+							let newComments = await res.json();
+
+							var dl = document.querySelector('dl');
+								var ele = document.createElement('div');
+								ele.innerHTML = '<dt>'+newComments.text+'<dt><dl>'+newComments.author+'</dl>';
+								dl.appendChild(ele);
+						}
+						catch(e){
+							console.error(e);
+						}
+					}
+
+				render(){
+					return (
+						<div>
+							<h1>commentList</h1>
+							<dl></dl>
+							<input type="text" placeholder="请输入您的评论" />
+							<button onClick={this._handleCommentSubmit}>确认</button>
+						</div>
+					)
+				}
+			}
+
+			ReactDOM.render(<Comment />, document.querySelector('#app'));
+		</script>
+	</body>
+</html>
